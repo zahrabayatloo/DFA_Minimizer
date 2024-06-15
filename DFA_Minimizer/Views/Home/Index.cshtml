@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFA Minimizer</title>
+    <script>
+        async function minimizeDFA() {
+            const dfaInput = {
+                states: document.getElementById("states").value.split(","),
+                alphabet: document.getElementById("alphabet").value.split(","),
+                transitionFunction: JSON.parse(document.getElementById("transitionFunction").value),
+                startState: document.getElementById("startState").value,
+                acceptStates: document.getElementById("acceptStates").value.split(",")
+            };
+
+            const response = await fetch('https://localhost:5001/api/dfa/minimize', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dfaInput)
+            });
+
+            const result = await response.json();
+            document.getElementById("result").innerText = JSON.stringify(result, null, 2);
+        }
+    </script>
+</head>
+<body>
+    <h1>DFA Minimizer</h1>
+    <label for="states">States:</label>
+    <input type="text" id="states" placeholder="q0,q1,q2">
+    <br>
+    <label for="alphabet">Alphabet:</label>
+    <input type="text" id="alphabet" placeholder="0,1">
+    <br>
+    <label for="transitionFunction">Transition Function:</label>
+    <textarea id="transitionFunction" placeholder='{"q0": {"0": "q1", "1": "q0"}, "q1": {"0": "q0", "1": "q2"}, "q2": {"0": "q2", "1": "q2"}}'></textarea>
+    <br>
+    <label for="startState">Start State:</label>
+    <input type="text" id="startState" placeholder="q0">
+    <br>
+    <label for="acceptStates">Accept States:</label>
+    <input type="text" id="acceptStates" placeholder="q2">
+    <br>
+    <button onclick="minimizeDFA()">Minimize DFA</button>
+    <pre id="result"></pre>
+</body>
+</html>
+
